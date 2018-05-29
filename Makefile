@@ -1,12 +1,12 @@
 .POSIX:
 EMACS   = emacs
 BATCH   = $(EMACS) -batch -Q -L . -L tests
-VERSION = 2.2.0
+VERSION = 3.0.0
 
 EL   = elfeed-csv.el elfeed-curl.el elfeed-db.el elfeed-lib.el	\
        elfeed-log.el elfeed-show.el elfeed.el xml-query.el	\
        elfeed-search.el elfeed-link.el
-DOC  = README.md UNLICENSE elfeed-pkg.el
+DOC  = README.md NEWS.md UNLICENSE elfeed-pkg.el
 WEB  = web/elfeed-web-pkg.el web/elfeed-web.el web/elfeed.css	\
        web/elfeed.js web/index.html
 TEST = tests/elfeed-db-tests.el tests/elfeed-lib-tests.el	\
@@ -14,6 +14,7 @@ TEST = tests/elfeed-db-tests.el tests/elfeed-lib-tests.el	\
 
 compile: $(EL:.el=.elc) $(TEST:.el=.elc)
 
+check: test
 test: $(EL:.el=.elc) $(TEST:.el=.elc)
 	$(BATCH) -l tests/elfeed-tests.elc -f ert-run-tests-batch
 
