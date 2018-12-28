@@ -39,7 +39,7 @@
   "An Emacs web feed reader."
   :group 'comm)
 
-(defconst elfeed-version "3.0.0")
+(defconst elfeed-version "3.1.0")
 
 (defcustom elfeed-feeds ()
   "List of all feeds that Elfeed should follow.
@@ -76,7 +76,7 @@ Each function should accept no arguments, and return a string or nil."
   (not (null (executable-find elfeed-curl-program-name)))
   "If non-nil, fetch feeds using curl instead of `url-retrieve'."
   :group 'elfeed
-  :type 'bool)
+  :type 'boolean)
 
 (defcustom elfeed-user-agent (format "Emacs Elfeed %s" elfeed-version)
   "User agent string to use for Elfeed (requires `elfeed-use-curl')."

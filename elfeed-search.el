@@ -180,7 +180,7 @@ When live editing the filter, it is bound to :live.")
    ((> (elfeed-queue-count-total) 0)
     (let ((total (elfeed-queue-count-total))
           (in-process (elfeed-queue-count-active)))
-      (format "%d feeds pending, %d in process ..."
+      (format "%d jobs pending, %d active..."
               (- total in-process) in-process)))
    ((let* ((db-time (seconds-to-time (elfeed-db-last-update)))
            (update (format-time-string "%Y-%m-%d %H:%M" db-time))
@@ -572,6 +572,10 @@ than this are allowed. Ex. \"@3-days-ago\" or \"@1-year-old\".
 Any component beginning with a # is an entry count maximum. The
 number following # determines the maxiumum number of entries
 to be shown (descending by date). Ex. \"#20\" or \"#100\".
+
+Any component beginning with a = is a regular expression matching
+the entry's feed (title or URL). Only entries belonging to a feed
+that match at least one of the = expressions will be shown.
 
 Every other space-seperated element is treated like a regular
 expression, matching against entry link, title, and feed title."
