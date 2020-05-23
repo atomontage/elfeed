@@ -17,6 +17,8 @@ For a longer overview,
    [30](https://www.youtube.com/watch?v=tjnK1rkO7RU),
    [31](https://www.youtube.com/watch?v=5zuSUbAHH8c)
  * [Take Elfeed everywhere: Mobile rss reading Emacs-style (for free/cheap)](http://babbagefiles.blogspot.com/2017/03/take-elfeed-everywhere-mobile-rss.html)
+ * [Elfeed Rules!](https://noonker.github.io/posts/2020-04-22-elfeed/) ([reddit](https://old.reddit.com/r/emacs/comments/g6oowz/elfeed_rules/))
+ * [Elfeed with Tiny Tiny RSS](https://codingquark.com/emacs/2020/04/19/elfeed-protocol-ttrss.html) ([hn](https://news.ycombinator.com/item?id=22915200))
  * [... more ...](http://nullprogram.com/tags/elfeed/)
  * [... and more ...](http://pragmaticemacs.com/category/elfeed/)
 
@@ -42,6 +44,8 @@ These projects extend Elfeed with additional features:
 
 * [elfeed-org](https://github.com/remyhonig/elfeed-org)
 * [elfeed-goodies](https://github.com/algernon/elfeed-goodies)
+* [elfeed-protocol](https://github.com/fasheng/elfeed-protocol)
+* [elfeed-score](https://github.com/sp1ff/elfeed-score)
 * [Elfeed Android interface](https://github.com/areina/elfeed-cljsrn)
   ([Google Play](https://play.google.com/store/apps/details?id=com.elfeedcljsrn))
 
@@ -64,6 +68,7 @@ Running the interactive function `elfeed` will pop up the
  * <kbd>g</kbd>: refresh view of the feed listing
  * <kbd>G</kbd>: fetch feed updates from the servers
  * <kbd>s</kbd>: update the search filter (see tags)
+ * <kbd>c</kbd>: clear the search filter
 
 This buffer will be empty until you add your feeds to the
 `elfeed-feeds` list and initiate an update with `M-x elfeed-update`
@@ -133,17 +138,22 @@ of strings, but an item can also be a list, providing set of
 
 To make tags useful, the Elfeed entry listing buffer can be filtered
 by tags. Use `elfeed-search-set-filter` (or <kbd>s</kbd>) to update
-the filter.
+the filter. Use `elfeed-search-clear-filter` to restore the default.
 
 Any component of the search string beginning with a `+` or
 a `-` is treated like a tag. `+` means the tag is required, `-` means
 the tag must not be present.
 
-A component beginning with a `@` indicates an age. Entries older than
-this age are filtered out. The age description accepts plain English,
-but cannot have spaces, so use dashes. For example, `"@2-years-old"`
-or `"@3-days-ago"`. The database is date-oriented, so **filters that
-include an age restriction are significantly more efficient.**
+A component beginning with a `@` indicates an age or a date range. An
+age is a relative time expression or an absolute date expression.
+Entries older than this age are filtered out. The age description
+accepts plain English, but cannot have spaces, so use dashes. For
+example, `"@2-years-old"`, `"@3-days-ago"` or `"@2019-06-24"`. A date
+range are two ages seperated by a `--`, e.g.
+`"@2019-06-20--2019-06-24"` or `"@5-days-ago--1-day-ago"`. The entry
+must be newer than the first expression but older than the second. The
+database is date-oriented, so **filters that include an age
+restriction are significantly more efficient.**
 
 A component beginning with a `!` is treated as an "inverse" regular
 expression. This means that any entry matching this regular expression
@@ -156,7 +166,11 @@ to limit the display to 20 entries: `#20`.
 
 A component beginning with a `=` is a regular expression matching the
 entry's feed (title or URL). Only entries belonging to a feed that
-match at least one of the `=` expressions will be shown.
+matches at least one of the `=` expressions will be shown.
+
+A component beginning with a `~` is a regular expression matching the
+entry's feed (title or URL). Only entries belonging to a feed that
+matches none of the `~` expressions will be shown.
 
 All other components are treated as a regular expression, and only
 entries matching it (title or URL) will be shown.
@@ -279,7 +293,7 @@ polymorphic `elfeed-meta` function. It's setf-able.
 Elfeed itself adds some entries to this plist, some for your use, some
 for its own use. Here are the properties that Elfeed uses:
 
-* `:author` : The entry's author of this entry.
+* `:authors` : A list of author plists (`:name`, `:uri`, `:email`).
 * `:canonical-url` : The final URL for the feed after all redirects.
 * `:categories` : The feed-supplied categories for this entry.
 * `:etag` : HTTP Etag header, for conditional GETs.

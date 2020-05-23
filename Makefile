@@ -1,7 +1,7 @@
 .POSIX:
 EMACS   = emacs
 BATCH   = $(EMACS) -batch -Q -L . -L tests
-VERSION = 3.1.0
+VERSION = 3.3.0
 
 EL   = elfeed-csv.el elfeed-curl.el elfeed-db.el elfeed-lib.el	\
        elfeed-log.el elfeed-show.el elfeed.el xml-query.el	\
@@ -9,8 +9,9 @@ EL   = elfeed-csv.el elfeed-curl.el elfeed-db.el elfeed-lib.el	\
 DOC  = README.md NEWS.md UNLICENSE elfeed-pkg.el
 WEB  = web/elfeed-web-pkg.el web/elfeed-web.el web/elfeed.css	\
        web/elfeed.js web/index.html
-TEST = tests/elfeed-db-tests.el tests/elfeed-lib-tests.el	\
-       tests/elfeed-tests.el tests/xml-query-tests.el
+TEST = tests/elfeed-db-tests.el tests/elfeed-lib-tests.el       \
+       tests/elfeed-tests.el tests/elfeed-search-tests.el       \
+       tests/xml-query-tests.el
 
 compile: $(EL:.el=.elc) $(TEST:.el=.elc)
 
@@ -22,6 +23,12 @@ package: elfeed-$(VERSION).tar elfeed-web-$(VERSION).tar
 
 clean:
 	rm -f *.tar $(EL:.el=.elc) $(TEST:.el=.elc)
+
+virtual: compile
+	(mkdir -p tmp-$$$$/.elfeed; \
+	 cp ~/.elfeed/index tmp-$$$$/.elfeed/ 2>/dev/null || true; \
+	 trap "rm -rf tmp-$$$$" INT EXIT; \
+	 HOME=$$PWD/tmp-$$$$ $(EMACS) -L . -l elfeed.elc $(ARGS))
 
 elfeed-$(VERSION).tar: $(EL) $(DOC)
 	rm -rf elfeed-$(VERSION)/
